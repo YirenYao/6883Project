@@ -18,12 +18,4 @@ namespace fre {
 	{
 		// show AAR, AAR_STD, CAAR, CAAR_STD matrix of one group
 	}
-	void showReturnMatrix(
-		const Group* BeatGroup,
-		const Group* MeetGroup,
-		const Group* MissGroup)
-	{
-		// show AAR, AAR_STD, CAAR, CAAR_STD matrix of all 3 groups
-
-	}
 }

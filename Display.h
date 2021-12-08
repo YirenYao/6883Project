@@ -9,8 +9,4 @@ namespace fre {
 		const Group* MissGroup);
 
 	void showReturnMatrix(const Group* group);
-	void showReturnMatrix(
-		const Group* BeatGroup,
-		const Group* MeetGroup,
-		const Group* MissGroup);
 }
