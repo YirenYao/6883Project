@@ -8,7 +8,7 @@ namespace fre {
 	class Stock
 	{
 	private:
-		string symbol, name;
+		string symbol, name; // 
 		string date, period_end;
 		vector<double> earning; // {estimate, reported, surprise, surprise%}
 		map<string, double> price;
