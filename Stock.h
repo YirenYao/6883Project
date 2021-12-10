@@ -8,7 +8,7 @@ namespace fre {
 	class Stock
 	{
 	private:
-		string symbol, name; // 
+		string symbol, name, staringdate; // startingdate indicates when the fisrt price of price series is, such as '2014-01-02'
 		string date, period_end;
 		vector<double> earning; // {estimate, reported, surprise, surprise%}
 		map<string, double> price;
