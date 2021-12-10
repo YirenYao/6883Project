@@ -14,22 +14,23 @@ int main()
 {
 	map<string, Stock> BeatStocks, MeetStocks, MissStocks;
 	Stock benchmark("IWB", "IWB", "", "", {});
-	double thr1, thr2;
-	/*
-	find threshold thr1, thr2
-	*/
+
+	double thr1 = 6.0;
+	double thr2 = 24.0;
 	readBasic(BeatStocks, MeetStocks, MissStocks, thr1, thr2);
-	
+	cout << BeatStocks.size() << ' ' << MeetStocks.size() << ' ' << MissStocks.size() << endl;
+
 	int N;
-	string from_date, to_date;
 	/*
 	read in N
-	find from_date and to_date
 	*/
-	readPrice(BeatStocks, N);
-	readPrice(MeetStocks, N);
-	readPrice(MissStocks, N);
-	readPrice(benchmark, from_date, to_date);
+	vector<string> date_range = readDate(N);
+	readPrice(benchmark, date_range[0], date_range[1]);
+
+	readPrice(BeatStocks, N, &benchmark);
+	readPrice(MeetStocks, N, &benchmark);
+	readPrice(MissStocks, N, &benchmark);
+	cout << BeatStocks.size() << ' ' << MeetStocks.size() << ' ' << MissStocks.size() << endl;
 
 	Group BeatGroup(&BeatStocks);
 	Group MeetGroup(&MeetStocks);

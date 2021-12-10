@@ -12,8 +12,10 @@ namespace fre {
 		map<string, Stock>& MissStocks,
 		double thr1, double thr2);
 
-	void readPrice(map<string, Stock>& stocks, int N);
+	void readPrice(map<string, Stock>& stocks, int N, const Stock* benchmark);
 
-	void readPrice(Stock stock, string from, string to);
+	void readPrice(Stock& stock, string from, string to);
+
+	vector<string> readDate(int N);
 
 }
