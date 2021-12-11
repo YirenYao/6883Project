@@ -7,12 +7,6 @@
 using namespace std;
 
 namespace fre {
-	vector<double> operator-(vector<double> a, const vector<double> b) {
-		for (int i = 0; i < int(a.size()); i++) {
-			a[i] -= b[i];
-		}
-		return a;
-	}
 
 	vector<double> Stock::calAR(const Stock &benchmark, int N) const {
 		// calculate abnormal return
