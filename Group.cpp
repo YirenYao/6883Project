@@ -1,3 +1,4 @@
+
 #include <vector>
 #include <string>
 #include <map>
@@ -6,57 +7,67 @@
 #include "Stock.h"
 #include "Group.h"
 #include "Matrix.h"
+#include <iostream>
 using namespace std;
+
 
 namespace fre {
     typedef vector<vector<double>> Matrix;
-
-    // funciton 1: calculate matrix mean in axis = 1
-    vector<double> matrixMean(const Matrix& mat)
-    {
-        int n = (int)mat[0].size();
-        int m = (int)mat.size();
-        vector<double> res(n);
-        for (int i = 0; i < m; i++ )
-            res = res + mat[i];
-        return res / m;
-    }
-
-    // function 2: calculate matrix std in axis = 1
-    vector<double> matrixStd(const Matrix& mat)
-    {
-        return Vpower(matrixMean(Mpower(mat, 2.0)) - Vpower(matrixMean(mat), 2.0), 0.5);
-    }
     
-    // BOOTSTRAP
-    void Group::calByBootstrap(const Stock &benchmark, int simuNum)
+    void validator(int selectNum, int mapsize)
+    {
+        if (selectNum > mapsize){
+            cout << "";
+            cout << "Selection Number MUST BE LESS THAN the number of stocks = "<< mapsize << endl;
+            cout << "";
+        }
+    }
+
+    void Group::calByBootstrap(const Stock &benchmark, int selectNum, int simuNum)
     {
         int idx = 0;
-        Matrix ARmat(simuNum);
-        Matrix CARmat(simuNum);
+        Matrix ARmat(selectNum);
+        Matrix CARmat(selectNum);
+        Matrix BStrapARmat(simuNum);
+        Matrix BStrapCARmat(simuNum);
+        validator(selectNum, (int)(*stocks).size());
+        
         map<string, Stock> ::iterator itr = (*stocks).begin();
         int plen = (int)itr -> second.getPriceVal().size() - 1; // get price lenth 2N
         
-        // Initialization for matrix
+        // Initialization for BStrapAAR and BStrapCAAR matrix for all simulation, shape = (simuNum, 2N)
         for (int i = 0; i < simuNum; i++)
+        {
+            BStrapARmat[i].resize(plen);
+            BStrapCARmat[i].resize(plen);
+        }
+        // Initialization for AR and CAR matrix for each simulation, shape = (selectNum, 2N)
+        for (int i = 0; i < selectNum; i++)
         {
             ARmat[i].resize(plen);
             CARmat[i].resize(plen);
         }
-        // bootstrap for AR and CAR matrix (~, 2N)
-        for (int i = 0; i < simuNum; i++)
+        
+        // BOOTSTRAP, iter: random selection and calc for simuNum times
+        for (int j = 0; j < simuNum; j++)
         {
-            idx = rand() % simuNum; //random idx
-            advance(itr, idx);
-            ARmat[i] = itr -> second.calAR(benchmark, N);
-            CARmat[i] = itr -> second.calCR(benchmark, N);
-            itr = (*stocks).begin();
+            // Each simulation: populate AR and CAR matrix, shape = (selectNum, 2N)
+            for (int i = 0; i < selectNum; i++)
+            {
+                idx = rand() % selectNum; //random idx
+                advance(itr, idx);
+                ARmat[i] = itr -> second.calAR(benchmark, N);
+                CARmat[i] = itr -> second.calCR(benchmark, N);
+                itr = (*stocks).begin();
+            }
+            BStrapARmat[j] = matrixMean(ARmat);
+            BStrapCARmat[j] = matrixMean(CARmat);
         }
         
-        AAR = matrixMean(ARmat);
-        AAR_STD = matrixStd(ARmat);
-        CAAR = matrixMean(CARmat);
-        CAAR_STD = matrixStd(CARmat);
+        AAR = matrixMean(BStrapARmat);
+        AAR_STD = matrixStd(BStrapARmat);
+        CAAR = matrixMean(BStrapCARmat);
+        CAAR_STD = matrixStd(BStrapCARmat);
     }
     
 }
