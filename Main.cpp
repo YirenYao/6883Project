@@ -21,8 +21,12 @@ int main()
 	cout << BeatStocks.size() << ' ' << MeetStocks.size() << ' ' << MissStocks.size() << endl;
 
 	int N;
+	int selecNum;
+	int simuNum;
 	/*
-	read in N
+	- read in N, number of stock prices = 2N + 1, N >= 60.
+	- read in selecNum, how many stocks are selected for each bootstrap sample, (< number of stocks inside each group), here default should be 80.
+	- read in simuNum, how many bootstrap simulation we want, can be any number, defalut should be 40.
 	*/
 	vector<string> date_range = readDate(N);
 	readPrice(benchmark, date_range[0], date_range[1]);
@@ -32,12 +36,12 @@ int main()
 	readPrice(MissStocks, N, &benchmark);
 	cout << BeatStocks.size() << ' ' << MeetStocks.size() << ' ' << MissStocks.size() << endl;
 
-	Group BeatGroup(&BeatStocks);
-	Group MeetGroup(&MeetStocks);
-	Group MissGroup(&MissStocks);
-	BeatGroup.calByBootstrap();
-	MeetGroup.calByBootstrap();
-	MeetGroup.calByBootstrap();
+	Group BeatGroup(&BeatStocks, N);
+	Group MeetGroup(&MeetStocks, N);
+	Group MissGroup(&MissStocks, N);
+	BeatGroup.calByBootstrap(benchmark, selecNum, simuNum);
+	MeetGroup.calByBootstrap(benchmark, selecNum, simuNum);
+	MissGroup.calByBootstrap(benchmark, selecNum, simuNum);
 
 	/*
 	implement menu
