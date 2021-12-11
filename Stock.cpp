@@ -20,7 +20,7 @@ namespace fre {
 
 		vector<double> stock_daily_return(2 * N), benchmark_daily_return(2 * N), abnormal_return(2 * N);
 
-		for (int i = 1; i < 2 * N; i++) {
+		for (int i = 1; i < 2 * N + 1; i++) {
 			cout << stock_daily_return[i] << endl;
 			stock_daily_return[i - 1] = (price_val[i] - price_val[i - 1]) / price_val[i - 1];
 			benchmark_daily_return[i - 1] = (new_prices[i] - new_prices[i - 1]) / new_prices[i - 1];
@@ -37,7 +37,7 @@ namespace fre {
 		vector<double> cumulative_return(2 * N);
 		cumulative_return[0] = abnormal_return[0];
 		for (int i = 1; i < 2 * N; i++) {
-			cumulative_return[i] += cumulative_return[i - 1];
+			cumulative_return[i] = cumulative_return[i - 1] + abnormal_return[i];
 		}
 		return cumulative_return;
 	}
