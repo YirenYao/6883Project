@@ -33,7 +33,7 @@ namespace fre {
         validator(selectNum, (int)(*stocks).size());
         
         map<string, Stock> ::iterator itr = (*stocks).begin();
-        int plen = (int)itr -> second.getPriceVal().size() - 1; // get price lenth 2N
+        int plen = 2 * N; // get price lenth 2N
         
         // Initialization for BStrapAAR and BStrapCAAR matrix for all simulation, shape = (simuNum, 2N)
         for (int i = 0; i < simuNum; i++)
