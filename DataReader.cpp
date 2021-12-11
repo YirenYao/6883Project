@@ -104,9 +104,10 @@ namespace fre {
 		tm_.tm_sec = 0;
 		time_t date = mktime(&tm_);
 		date += (time_t)N * 86400;  // 1 day = 86400 sec
-		gmtime_s(&tm_, &date);
+		
+		tm* tm_new = gmtime(&date);
 		char c[11] = { 0 };
-		strftime(c, 11, "%Y-%m-%d", &tm_);
+		strftime(c, 11, "%Y-%m-%d", tm_new);
 		string str(c);
 		return str;
 	}
