@@ -1,5 +1,4 @@
 
-
 #include "Matrix.h"
 #include <cmath>
 #include <iostream>
@@ -46,6 +45,22 @@ Matrix Mpower(const Matrix& M, double a)
     return U;
 }
 
+// funciton 1: calculate matrix mean in axis = 1
+vector<double> matrixMean(const Matrix& mat)
+{
+    int n = (int)mat[0].size();
+    int m = (int)mat.size();
+    vector<double> res(n);
+    for (int i = 0; i < m; i++ )
+        res = res + mat[i];
+    return res / m;
+}
+
+// function 2: calculate matrix std in axis = 1
+vector<double> matrixStd(const Matrix& mat)
+{
+    return Vpower(matrixMean(Mpower(mat, 2.0)) - Vpower(matrixMean(mat), 2.0), 0.5);
+}
 
 
 }
