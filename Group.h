@@ -29,6 +29,7 @@ namespace fre {
         vector<double> getCAAR()const { return CAAR; }
         vector<double> getCAAR_STD()const { return CAAR_STD; }
 
-        void calByBootstrap(const Stock &benchmark, int simuNum);
+        void calByBootstrap(const Stock &benchmark, int selectNum, int simuNum);
     };
 }
+
