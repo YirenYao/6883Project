@@ -54,7 +54,7 @@ namespace fre {
             // Each simulation: populate AR and CAR matrix, shape = (selectNum, 2N)
             for (int i = 0; i < selectNum; i++)
             {
-                idx = rand() % selectNum; //random idx
+                idx = rand() % stocks->size(); //random idx
                 advance(itr, idx);
                 ARmat[i] = itr -> second.calAR(benchmark, N);
                 CARmat[i] = itr -> second.calCR(benchmark, N);
