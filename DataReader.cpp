@@ -290,6 +290,6 @@ namespace fre {
 		}
 		int N_ = ceil(N * 7 / 5 + 10); // considering weekend and holiday
 
-		return { calNDate(date_min, -N), calNDate(date_max, N) };
+		return { calNDate(date_min, -N_), calNDate(date_max, N_) };
 	}
 }
