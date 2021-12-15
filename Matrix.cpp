@@ -2,6 +2,7 @@
 #include "Matrix.h"
 #include <cmath>
 #include <iostream>
+#include <iomanip>
 using namespace std;
 namespace fre {
 
@@ -62,5 +63,13 @@ vector<double> matrixStd(const Matrix& mat)
     return Vpower(matrixMean(Mpower(mat, 2.0)) - Vpower(matrixMean(mat), 2.0), 0.5);
 }
 
+// overload cout for vector, cout every element in the vector
+ostream& operator<<(ostream& out, Vector& V)
+{
+    for (Vector::iterator itr = V.begin(); itr != V.end(); itr++)
+        out << fixed << setprecision(2) << *itr << " ";
+    out << endl;
+    return out;
+}
 
 }
