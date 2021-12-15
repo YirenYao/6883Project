@@ -64,9 +64,9 @@ vector<double> matrixStd(const Matrix& mat)
 }
 
 // overload cout for vector, cout every element in the vector
-ostream& operator<<(ostream& out, Vector& V)
+ostream& operator<<(ostream& out, const Vector& V)
 {
-    for (Vector::iterator itr = V.begin(); itr != V.end(); itr++)
+    for (Vector::const_iterator itr = V.begin(); itr != V.end(); itr++)
         out << fixed << setprecision(2) << *itr << " ";
     out << endl;
     return out;

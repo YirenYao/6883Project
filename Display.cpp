@@ -19,9 +19,13 @@ namespace fre {
 	{
 		// show AAR, AAR_STD, CAAR, CAAR_STD matrix of one group
 
-		cout << 'AAR:' << endl << group->getAAR();
-		cout << 'AAR Std:' << endl << group->getAAR_STD();
-		cout << 'CAAR:' << endl << group->getCAAR();
-		cout << 'CAAR Std:' << endl << group->getCAAR_STD();
+		cout << "AAR:" << endl;
+		cout << group->getAAR();
+		cout << "AAR Std:" << endl;
+		cout << group->getAAR_STD();
+		cout << "CAAR:" << endl;
+		cout << group->getCAAR();
+		cout << "CAAR Std:" << endl;
+		cout << group->getCAAR_STD();
 	}
 }

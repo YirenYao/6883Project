@@ -15,5 +15,5 @@ Vector Vpower(const Vector& V, double a);
 Matrix Mpower(const Matrix& M, double a);
 vector<double> matrixMean(const Matrix& mat);
 vector<double> matrixStd(const Matrix& mat);
-ostream& operator<<(ostream& out, Vector& V);
+ostream& operator<<(ostream& out, const Vector& V);
 }
