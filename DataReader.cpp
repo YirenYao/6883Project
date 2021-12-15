@@ -186,7 +186,7 @@ namespace fre {
 					}
 				}
 
-				if ((price_dates.end() - price_dates.begin()) < (2 * N + 1))
+				if (price_dates.size() < (2 * N + 1))
 				{
 					// not enough days
 					cout << itr->first << " deleted. Not enough dates." << endl;

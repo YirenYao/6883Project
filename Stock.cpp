@@ -13,7 +13,7 @@ namespace fre {
 		vector<string> dates = benchmark.getPriceDate();
 		vector<double> prices = benchmark.getPriceVal();
 
-		int idx = find(dates.begin(), dates.end(), startingdate) - dates.begin();
+		int idx = find(dates.begin(), dates.end(), starting_date) - dates.begin();
 		vector<string> new_dates = vector<string>(dates.begin() + idx, dates.begin() + idx + 2 * N + 1);
 		vector<double> new_prices = vector<double>(prices.begin() + idx, prices.begin() + idx + 2 * N + 1);
 
