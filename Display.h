@@ -6,7 +6,7 @@ using namespace std;
 namespace fre {
 
 	//helper function for plotCAARGraph
-	void plotResults(const Vector xData, const Vector miss_CAAR, const Vector meet_CAAR, const Vector beat_CAAR, int dataSize);
+	void plotResults(const Vector& xData, const Vector& miss_CAAR, const Vector& meet_CAAR, const Vector& beat_CAAR, const int dataSize);
 
 	void plotCAARGraph(
 		const Group* BeatGroup,

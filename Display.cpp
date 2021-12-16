@@ -9,7 +9,7 @@ using namespace std;
 namespace fre {
     
     //helper function for plotCAARGraph
-    void plotResults(const Vector xData, const Vector miss_CAAR, const Vector meet_CAAR, const Vector beat_CAAR, int dataSize) {
+    void plotResults(const Vector& xData, const Vector& miss_CAAR, const Vector& meet_CAAR, const Vector& beat_CAAR, const int dataSize) {
         FILE* gnuplotPipe, * tempDataFile;
         const char* label1 = "Miss CAAR";
         const char* label2 = "Meet CAAR";
@@ -67,19 +67,13 @@ namespace fre {
 		const Group* MissGroup)
 	{
 		// plot CAAR graph of all 3 groups
-
-		const Vector beat_CAAR = BeatGroup->getCAAR();
-		const Vector meet_CAAR = MeetGroup->getCAAR();
-		const Vector miss_CAAR = MissGroup->getCAAR();
-		
-		int N = (int)(beat_CAAR.size()/2); 
+		int N = (int)(BeatGroup->getCAAR().size()/2);
 		Vector xData(2*N);
 		for (int i = 0; i < 2*N; i++) {
 			xData[i] = -(N-1) + i ; 
 		}
 
-		plotResults(xData, miss_CAAR, meet_CAAR, beat_CAAR, 2*N);
-
+		plotResults(xData, MissGroup->getCAAR(), MeetGroup->getCAAR(), BeatGroup->getCAAR(), 2*N);
 	}
 
 	void showReturnMatrix(const Group* group)
