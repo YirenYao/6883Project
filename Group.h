@@ -24,6 +24,16 @@ namespace fre {
             srand((unsigned)time(NULL));
         }
 
+        void updateN(int N_)
+        {
+            N = N_;
+            AAR.resize(2 * N_);
+            AAR_STD.resize(2 * N_);
+            CAAR.resize(2 * N_);
+            CAAR_STD.resize(2 * N_);
+        }
+
+        map<string, Stock>* getStocks()const { return stocks; }
         vector<double> getAAR()const { return AAR; }
         vector<double> getAAR_STD()const { return AAR_STD; }
         vector<double> getCAAR()const { return CAAR; }

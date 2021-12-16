@@ -14,10 +14,9 @@
 using namespace std;
 
 namespace fre {
-	void readBasic(
-		map<string, Stock>& BeatStocks,
-		map<string, Stock>& MeetStocks,
-		map<string, Stock>& MissStocks,
+	void readBasic(map<string, Stock>* BeatStocks,
+		map<string, Stock>* MeetStocks,
+		map<string, Stock>* MissStocks,
 		double thr1, double thr2)
 	{
 		map<string, string> temp;
@@ -55,21 +54,22 @@ namespace fre {
 
 			if (stod(surprise_pct) < thr1)
 			{
-				MissStocks[symbol] = stocki;
+				(*MissStocks)[symbol] = stocki;
 			}
 			else if (stod(surprise_pct) > thr2)
 			{
-				BeatStocks[symbol] = stocki;
+				(*BeatStocks)[symbol] = stocki;
 			}
 			else
 			{
-				MeetStocks[symbol] = stocki;
+				(*MeetStocks)[symbol] = stocki;
 			}
 		}
 	}
 
 	struct MemoryStruct {
 		char* memory;
+		size_t total_size;
 		size_t size;
 	};
 	void* myrealloc(void* ptr, size_t size)
@@ -83,11 +83,15 @@ namespace fre {
 	{
 		size_t realsize = size * nmemb;
 		struct MemoryStruct* mem = (struct MemoryStruct*)data;
-		mem->memory = (char*)myrealloc(mem->memory, mem->size + realsize + 1);
+		if ((mem->size + realsize) >= mem->total_size)
+			mem->memory = (char*)myrealloc(mem->memory, mem->size + realsize + 1);
+		//mem->memory = (char*)myrealloc(mem->memory, mem->size + realsize + 1);
 		if (mem->memory) {
 			memcpy(&(mem->memory[mem->size]), ptr, realsize);
 			mem->size += realsize;
 			mem->memory[mem->size] = 0;
+			if (mem->size > mem->total_size)
+				mem->total_size = mem->size;
 		}
 		return realsize;
 	}
@@ -104,7 +108,7 @@ namespace fre {
 		tm_.tm_sec = 0;
 		time_t date = mktime(&tm_);
 		date += (time_t)N * 86400;  // 1 day = 86400 sec
-		
+
 		tm* tm_new = gmtime(&date);
 		char c[11] = { 0 };
 		strftime(c, 11, "%Y-%m-%d", tm_new);
@@ -112,8 +116,9 @@ namespace fre {
 		return str;
 	}
 
-	void readPrice(map<string, Stock>& stocks, int N, const Stock* benchmark)
+	void readPrice(map<string, Stock>* stocks, int N, const Stock* benchmark)
 	{
+		vector<string> trade_days = benchmark->getPriceDate(); // reference trading days
 		// declaration of an object CURL
 		CURL* handle;
 		CURLcode result;
@@ -125,8 +130,6 @@ namespace fre {
 		// if everything's all right with the easy handle...
 		if (handle)
 		{
-			vector<string> trade_days = benchmark->getPriceDate(); // reference trading days
-
 			const string url_common = "https://eodhistoricaldata.com/api/eod/";
 			const string api_token = "61ad392951f604.64641793";
 			string symbol, start_date, end_date;
@@ -135,12 +138,17 @@ namespace fre {
 			struct MemoryStruct data;
 			data.memory = NULL;
 			data.size = 0;
+			data.total_size = 0;
 
 			vector<string>::iterator itr_date0;
-			map<string, Stock>::iterator itr = stocks.begin();
+			map<string, Stock>::iterator itr = stocks->begin();
 
-			for (; itr != stocks.end(); itr++)
+			for (; itr != stocks->end(); itr++)
 			{
+				memset(data.memory, '\0', data.total_size);
+				data.size = 0;
+				//data.memory = NULL;
+
 				itr_date0 = find(trade_days.begin(), trade_days.end(), itr->second.getAnnounceDate());
 				start_date = *(itr_date0 - N);
 				end_date = *(itr_date0 + N);
@@ -172,9 +180,11 @@ namespace fre {
 				string sValue, sDate;
 				double dValue = 0;
 				string line;
+				getline(sData, line); // skip first line
 				while (getline(sData, line))
 				{
 					size_t found = line.find('-');
+					//cout << line << endl;
 					if (found != std::string::npos)
 					{
 						sDate = line.substr(0, line.find_first_of(','));
@@ -184,23 +194,24 @@ namespace fre {
 						price_dates.push_back(sDate);
 						price_nums.push_back(dValue);
 					}
+					else break;
 				}
 
-				if (price_dates.size() < (2 * N + 1))
+				if ((int)price_dates.size() < (2 * N + 1))
 				{
 					// not enough days
 					cout << itr->first << " deleted. Not enough dates." << endl;
-					stocks.erase(itr--);
+					stocks->erase(itr--);
 				}
 				else
 				{
 					itr->second.updatePrice(price_dates, price_nums);
 				}
-				data.memory = NULL;
-				data.size = 0;
+
 			}
 			free(data.memory);
 			data.size = 0;
+			data.total_size = 0;
 		}
 	}
 
@@ -223,6 +234,7 @@ namespace fre {
 			struct MemoryStruct data;
 			data.memory = NULL;
 			data.size = 0;
+			data.total_size = 0;
 
 			url_request = url_common + stock.getSymbol() + ".US?" + "from=" + from + "&to=" + to + "&period=d" + "&api_token=" + api_token;
 			curl_easy_setopt(handle, CURLOPT_URL, url_request.c_str());
@@ -267,6 +279,7 @@ namespace fre {
 
 			free(data.memory);
 			data.size = 0;
+			data.total_size = 0;
 		}
 	}
 

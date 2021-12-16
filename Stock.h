@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <iostream>
+#include <iomanip>
 
 using namespace std;
 namespace fre {
@@ -77,7 +79,22 @@ namespace fre {
 
 		vector<double> calCR(const Stock &benchmark, int N) const;
 
+		void Display(Stock& benchmark, int N)const {
+			cout << name << endl << endl;
 
+			cout << setw(15) << "Earning Date" << setw(15) << "Period End" << setw(15) << "Estimated"
+				<< setw(15) << "Reported" << setw(15) << "Surprise" << setw(15) << "Surprise%" << endl;
+			cout << setw(15) << date << setw(15) << period_end;
+			for (vector<double>::const_iterator itr = earning.begin(); itr != earning.end(); itr++)
+				cout << fixed << setprecision(4) << setw(15) << *itr;
+			cout << endl << endl;
+
+			vector<double> CR = calCR(benchmark, N);
+			cout << setw(15) << "Date" << setw(15) << "Price" << setw(20) << "Cumulative Return" << endl;
+			cout << setw(15) << price_date[0] << setw(15) << fixed << setprecision(2) << price_val[0] << endl;
+			for (int i = 1; i < (int)price_date.size(); i++)
+				cout << setw(15) << price_date[i] << fixed << setprecision(2) << setw(15) << price_val[i] << fixed << setprecision(4) << setw(20) << CR[i - 1] << endl;
+		}
 	};
 
 }

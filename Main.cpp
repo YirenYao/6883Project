@@ -10,42 +10,139 @@
 using namespace std;
 using namespace fre;
 
-int main()
+const double thr1 = 6;
+const double thr2 = 24;
+const int selecNum = 80;
+const int simuNum = 40;
+
+void time_log()
 {
-	map<string, Stock> BeatStocks, MeetStocks, MissStocks;
-	Stock benchmark("IWB", "IWB", "", "", {});
+	time_t now = time(0);
+	tm* tm_ = localtime(&now);
+	char buffer[80];
+	strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", tm_);
+	cout << buffer << "\t";
+}
 
-	double thr1 = 6.0;
-	double thr2 = 24.0;
-	readBasic(BeatStocks, MeetStocks, MissStocks, thr1, thr2);
-	cout << BeatStocks.size() << ' ' << MeetStocks.size() << ' ' << MissStocks.size() << endl;
+void init(Group& BeatGroup, Group& MeetGroup, Group& MissGroup, Stock& benchmark, int& N) {
+	int N_ = 0;
+	cout << "input N:" << endl;
+	while (N_ < 60) {
+		cin >> N_;
+		if (N_ < 60) cerr << "N should be no less than 60" << endl;
+	}
+	N = N_; 
 
-	int N;
-	int selecNum;
-	int simuNum;
-	/*
-	- read in N, number of stock prices = 2N + 1, N >= 60.
-	- read in selecNum, how many stocks are selected for each bootstrap sample, (< number of stocks inside each group), here default should be 80.
-	- read in simuNum, how many bootstrap simulation we want, can be any number, defalut should be 40.
-	*/
+	time_t t_0 = time(0);
+	time_log(); cout << "initializing..." << endl;
+
+	BeatGroup.updateN(N);
+	MeetGroup.updateN(N);
+	MissGroup.updateN(N);
+
+	time_log(); cout << "reading earnings..." << endl;
+	readBasic(BeatGroup.getStocks(), MeetGroup.getStocks(), MissGroup.getStocks(), thr1, thr2);
+	cout << "Beat Group: " << BeatGroup.getStocks()->size() << endl <<
+		"Meet Group: " << MeetGroup.getStocks()->size() << endl <<
+		"Miss Group: " << MissGroup.getStocks()->size() << endl;
+
+	time_log(); cout << "downloading price ..." << endl;
 	vector<string> date_range = readDate(N);
 	readPrice(benchmark, date_range[0], date_range[1]);
 
-	readPrice(BeatStocks, N, &benchmark);
-	readPrice(MeetStocks, N, &benchmark);
-	readPrice(MissStocks, N, &benchmark);
-	cout << BeatStocks.size() << ' ' << MeetStocks.size() << ' ' << MissStocks.size() << endl;
+	readPrice(BeatGroup.getStocks(), N, &benchmark);
+	time_log(); cout << "beat group finished" << endl;
+	readPrice(MeetGroup.getStocks(), N, &benchmark);
+	time_log(); cout << "meet group finished" << endl;
+	readPrice(MissGroup.getStocks(), N, &benchmark);
+	time_log(); cout << "miss group finished" << endl;
+	cout << "Beat Group: " << BeatGroup.getStocks()->size() << endl <<
+		"Meet Group: " << MeetGroup.getStocks()->size() << endl <<
+		"Miss Group: " << MissGroup.getStocks()->size() << endl;
 
-	Group BeatGroup(&BeatStocks, N);
-	Group MeetGroup(&MeetStocks, N);
-	Group MissGroup(&MissStocks, N);
+	time_log(); cout << "calculate by bootstrap..." << endl;
 	BeatGroup.calByBootstrap(benchmark, selecNum, simuNum);
 	MeetGroup.calByBootstrap(benchmark, selecNum, simuNum);
 	MissGroup.calByBootstrap(benchmark, selecNum, simuNum);
+	time_log(); cout << "initialization finished. total time: " << (time_t)(time(0) - t_0) << "sec" << endl;
+}
 
-	/*
-	implement menu
-	and respond by command
-	*/
+int main() {
+	Stock benchmark("IWB", "IWB", "", "", {});
+	map<string, Stock> BeatStocks, MeetStocks, MissStocks;
+	int N = 60;
+	Group BeatGroup(&BeatStocks, N);
+	Group MeetGroup(&MeetStocks, N);
+	Group MissGroup(&MissStocks, N);
+
+	init(BeatGroup, MeetGroup, MissGroup, benchmark, N);
+
+	int option = 0;
+	string symbol;
+	map<string, Stock>::const_iterator itr;
+
+	while (1)
+	{
+		cout << "\n1\t Pull stock infomation\n";
+		cout << "2\t Show AAR, AAR-STD, CAAR, CAAR-STD\n";
+		cout << "3\t Plot CAAR graph\n";
+		cout << "4\t Select new N\n";
+		cout << "5\t Exit\n";
+		cin >> option;
+		switch (option)
+		{
+		case 1:
+			cout << "input symbol" << endl;
+			cin >> symbol;
+			if (BeatStocks.find(symbol) != BeatStocks.end()) {
+				cout << "Beat Group\n";
+				BeatStocks[symbol].Display(benchmark, N);
+				break;
+			}
+			else if (MeetStocks.find(symbol) != MeetStocks.end()) {
+				cout << "Meet Group\n";
+				MeetStocks[symbol].Display(benchmark, N);
+				break;
+			}
+			else if (MissStocks.find(symbol) != MissStocks.end()) {
+				cout << "Miss Group\n";
+				MissStocks[symbol].Display(benchmark, N);
+				break;
+			}
+			else {
+				cerr << "Not Found\n";
+				break;
+			}
+
+		case 2:
+			cout << "select group\n1\tbeat group\n2\tmeet group\n3\tmiss group" << endl;
+			cin >> option;
+			switch (option)
+			{
+			case 1:
+				showReturnMatrix(&BeatGroup);
+				break;
+			case 2:
+				showReturnMatrix(&MeetGroup);
+				break;
+			case 3:
+				showReturnMatrix(&MissGroup);
+				break;
+			default:
+				cout << "unexpected input" << endl;
+			}
+			break;
+		case 3:
+			plotCAARGraph(&BeatGroup, &MeetGroup, &MissGroup);
+			break;
+		case 4:
+			init(BeatGroup, MeetGroup, MissGroup, benchmark, N);
+		case 5:
+			return 0;
+		default:
+			cout << "unexpected input" << endl;
+		}
+	}
+
 	return 0;
 }

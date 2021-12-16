@@ -14,14 +14,12 @@ namespace fre {
 		vector<double> prices = benchmark.getPriceVal();
 
 		int idx = find(dates.begin(), dates.end(), starting_date) - dates.begin();
-		vector<string> new_dates = vector<string>(dates.begin() + idx, dates.begin() + idx + 2 * N + 1);
+		//vector<string> new_dates = vector<string>(dates.begin() + idx, dates.begin() + idx + 2 * N + 1);
 		vector<double> new_prices = vector<double>(prices.begin() + idx, prices.begin() + idx + 2 * N + 1);
-
 
 		vector<double> stock_daily_return(2 * N), benchmark_daily_return(2 * N), abnormal_return(2 * N);
 
 		for (int i = 1; i < 2 * N + 1; i++) {
-			cout << stock_daily_return[i] << endl;
 			stock_daily_return[i - 1] = (price_val[i] - price_val[i - 1]) / price_val[i - 1];
 			benchmark_daily_return[i - 1] = (new_prices[i] - new_prices[i - 1]) / new_prices[i - 1];
 			abnormal_return[i - 1] = stock_daily_return[i - 1] - benchmark_daily_return[i - 1];

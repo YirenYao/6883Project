@@ -51,6 +51,7 @@ namespace fre {
 
             printf("press enter to continue...");
             getchar();
+            getchar();
             remove(label1);
             remove(label2);
             remove(label3);

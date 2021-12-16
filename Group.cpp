@@ -4,10 +4,10 @@
 #include <map>
 #include <ctime>
 #include <cstdlib>
+#include <iostream>
 #include "Stock.h"
 #include "Group.h"
 #include "Matrix.h"
-#include <iostream>
 using namespace std;
 
 

@@ -11,3 +11,8 @@ eod historicaldata token: 61ad392951f604.64641793
 - Group and Stock Module are ready. 
 - These two modules for implementing bootstrap algo to calculate AAR, CAAR, AAR_STD, CAAR_STD (stored as private data in Group Class).
 - Update main funcitons for these two modules
+
+## 12/16/2021 update
+- Display module is ready
+- Menu is ready. DataReader is slightly changed to accommodate changes in main function
+- All modules are integrated and tested.
