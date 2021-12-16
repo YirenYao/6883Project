@@ -67,8 +67,7 @@ vector<double> matrixStd(const Matrix& mat)
 ostream& operator<<(ostream& out, const Vector& V)
 {
     for (Vector::const_iterator itr = V.begin(); itr != V.end(); itr++)
-        out << fixed << setprecision(2) << *itr << " ";
-    out << endl;
+        out << fixed << setprecision(4) << *itr << endl;
     return out;
 }
 
