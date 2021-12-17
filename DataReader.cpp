@@ -116,14 +116,14 @@ namespace fre {
 		return str;
 	}
 
-	void readPrice(map<string, Stock>* stocks, int N, const Stock* benchmark)
+	void readPrice_group(map<string, Stock>* stocks, int N, const Stock* benchmark)
 	{
 		vector<string> trade_days = benchmark->getPriceDate(); // reference trading days
 		// declaration of an object CURL
 		CURL* handle;
 		CURLcode result;
 		// set up the program environment that libcurl needs
-		curl_global_init(CURL_GLOBAL_ALL);
+		// curl_global_init(CURL_GLOBAL_ALL);
 		// curl_easy_init() returns a CURL easy handle
 		handle = curl_easy_init();
 

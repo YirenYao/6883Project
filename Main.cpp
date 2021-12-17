@@ -2,6 +2,8 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <thread>
+#include "curl/curl.h"
 #include "Stock.h"
 #include "Group.h"
 #include "DataReader.h"
@@ -50,12 +52,14 @@ void init(Group& BeatGroup, Group& MeetGroup, Group& MissGroup, Stock& benchmark
 	vector<string> date_range = readDate(N);
 	readPrice(benchmark, date_range[0], date_range[1]);
 
-	readPrice(BeatGroup.getStocks(), N, &benchmark);
-	time_log(); cout << "beat group finished" << endl;
-	readPrice(MeetGroup.getStocks(), N, &benchmark);
-	time_log(); cout << "meet group finished" << endl;
-	readPrice(MissGroup.getStocks(), N, &benchmark);
-	time_log(); cout << "miss group finished" << endl;
+	curl_global_init(CURL_GLOBAL_ALL);
+	thread t1(readPrice_group, BeatGroup.getStocks(), N, &benchmark);
+	thread t2(readPrice_group, MeetGroup.getStocks(), N, &benchmark);
+	thread t3(readPrice_group, MissGroup.getStocks(), N, &benchmark);
+	t1.join();
+	t2.join();
+	t3.join();
+	time_log(); cout << "price ok" << endl;
 	cout << "Beat Group: " << BeatGroup.getStocks()->size() << endl <<
 		"Meet Group: " << MeetGroup.getStocks()->size() << endl <<
 		"Miss Group: " << MissGroup.getStocks()->size() << endl;
@@ -137,6 +141,7 @@ int main() {
 			break;
 		case 4:
 			init(BeatGroup, MeetGroup, MissGroup, benchmark, N);
+			break;
 		case 5:
 			return 0;
 		default:
